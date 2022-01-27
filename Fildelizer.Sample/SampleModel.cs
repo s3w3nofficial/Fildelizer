@@ -5,7 +5,7 @@ namespace Fildelizer.Sample;
 
 public record SampleModel
 {
-    [Label("name")]
+    [Label("some random label")]
     [PlaceHolder("test placeholder")]
     [MaxLength(20)]
     public string Test { get; set; } 

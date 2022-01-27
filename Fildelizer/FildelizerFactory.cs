@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using Newtonsoft.Json;
 
 namespace Fildelizer;
@@ -27,9 +28,24 @@ public class FildelizerFactory<TBuilder, TResponseModel>
             var metadata = new Dictionary<string, object>();
             foreach (var attribute in attributes)
             {
+                var generic = typeof(IFildelizerAttributeBehaviour<>).MakeGenericType(attribute.GetType());
+                var method = generic.GetMethod("GetData");
+
+                var instances = Assembly.GetEntryAssembly().ExportedTypes
+                    .Where(x => x
+                        .GetInterfaces()
+                        .Where(x => x.IsGenericType)
+                        .Where(x => x.GetGenericTypeDefinition() == typeof(IFildelizerAttributeBehaviour<>))
+                        .Where(x => x.GetGenericArguments().First() == attribute.GetType()).Any())
+                    .Select(x => Activator.CreateInstance(x));
+
+                foreach (var instance in instances)
+                    metadata = ((Dictionary<string, object>) method.Invoke(instance, new [] { attribute }))
+                        .Concat(metadata)
+                        .ToDictionary(x => x.Key, x => x.Value);
             }
             
-            this._builder.BuildProperty(property.GetType(), "some random name", metadata);
+            this._builder.BuildProperty(property.PropertyType, "some random name", metadata);
         }
 
         return this._builder.Result;

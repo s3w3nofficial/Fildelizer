@@ -1,8 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using Fildelizer.Sample;
+using Fildelizer.Sample.V3;
 using Newtonsoft.Json;
 
-var response = FormFactory.Create<SampleModel>();
+var result = FormFactory.Create<SampleModel>(AppLinkType.VideoDetail, Method.GET);
 
-Console.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
+Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));

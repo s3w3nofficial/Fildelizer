@@ -2,11 +2,6 @@ namespace Fildelizer;
 
 public interface IFildelizerBuilder<TResponseModel>
 {
-    void BuildStringProperty(CommonArributeValues values);
-    
-    void BuildIntProperty(CommonArributeValues values);
-    
-    void BuildOtherProperty(Type type, CommonArributeValues values);
-
-    TResponseModel Result { get; }
+    void BuildProperty(Type propertyType, string propertyName, Dictionary<string, object> metadata);
+    TResponseModel Result { get; } 
 }

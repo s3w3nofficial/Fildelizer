@@ -1,43 +1,27 @@
+using Fildelizer.Sample.V3;
+using Fildelizer.Sample.V3.FormFields.Types;
+
 namespace Fildelizer.Sample;
 
 public class FormBuilder : IFildelizerBuilder<Form>
 {
-   private readonly Form _form;
-   public FormBuilder()
-   {
-      this._form = new Form
-      {
-         Name = "test form"
-      };
-   }
+    private Form _form;
+    public FormBuilder()
+    {
+        this._form = new Form();
+    }
 
-   public void BuildStringProperty(CommonArributeValues values)
-   {
-      var field = new StringFormField
-      {
-         Name = values.Name ?? throw new ArgumentNullException(nameof(values)),
-         MaxLength = values.MaxLength,
-         MinLength = values.MinLength 
-      };
+    public void BuildProperty(Type propertyType, string propertyName, Dictionary<string, object> metadata)
+    {
+        if (propertyType == typeof(string))
+        {
+            this._form.Value.Add(new FormFieldString
+            {
+               Name = propertyName,
+               Label = metadata["label"]?.ToString()
+            });
+        }
+    }
 
-      this._form.Fields.Add(field);
-   }
-
-   public void BuildIntProperty(CommonArributeValues values)
-   {
-      var field = new IntFormField
-      {
-         Name = values.Name,
-         MaxSize = values.MaxLength,
-         MinSize = values.MinLength 
-      };
-      
-      this._form.Fields.Add(field);
-   }
-
-   public void BuildOtherProperty(Type type, CommonArributeValues values)
-   {
-   }
-
-   public Form Result { get => this._form; }
+    public Form Result { get => _form; }
 }
